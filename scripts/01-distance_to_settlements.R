@@ -60,10 +60,10 @@ split_tiles <- function(r, n_tiles = 100, buffer_size = 10, output_dir = 'result
         # check tile is not empty
         if (!is.null(tile) && ncell(tile) > 0) {
           # create filename (we cannot store in RAM)
-          tile_filename <- paste0(output_dir, '/tile_', i, '_', j, '.asc')
+          tile_filename <- paste0(output_dir, '/tile_', i, '_', j, '.tif')
           
           # save file
-          writeRaster(tile, tile_filename, format='ascii', overwrite = TRUE)
+          writeRaster(tile, tile_filename, overwrite = TRUE)
         }
       }
     }
@@ -77,7 +77,7 @@ tiles <- split_tiles(r)
 
 output_dir <- 'results'
 # get all paths to generated tiles
-tile_files <- list.files(output_dir, pattern = 'tile_.*\\.asc$', full.names = TRUE)
+tile_files <- list.files(output_dir, pattern = 'tile_.*\\.tif$', full.names = TRUE)
 
 # loop to load tile, calculate distance and save results
 for (tile_file in tile_files) {
@@ -91,19 +91,18 @@ for (tile_file in tile_files) {
   dist_filename <- gsub('tile_', 'dist_', tile_file)
   
   # save
-  writeRaster(dist_tile, dist_filename, format='ascii', overwrite = TRUE)
+  writeRaster(dist_tile, dist_filename, overwrite = TRUE)
 }
 
 # merge distance tiles extracting minimum distance when pixels overlap (borders)
-distance_tiles <- list.files(output_dir, pattern = 'dist_.*\\.asc$', full.names = TRUE) %>%
+distance_tiles <- list.files(output_dir, pattern = 'dist_.*\\.tif$', full.names = TRUE) %>%
   lapply(rast)
 
 # combine tiles
 distance_raster <- do.call(mosaic, c(distance_tiles, fun = 'min'))
 
 # save combined raster
-writeRaster(distance_raster, 'distance_2000.asc',
-            format='ascii', overwrite = TRUE)
+writeRaster(distance_raster, 'distance_2000.tif', overwrite = TRUE)
 
 # plot
 plot(distance_raster)
