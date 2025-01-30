@@ -76,7 +76,7 @@ for (i in seq_along(tiles)[2:6]) {
     # formula: if a pixel in 'original' == 0 or 1, then extract value in 'processed' (dist)
     # if 'original' != 0 or 1, then extract value in 'original' (NA)
     "--calc", shQuote("(B == 0) * A + (B == 1) * A + ((B != 0) * (B != 1)) * B"),
-    "--NoDataValue=-9999",
+    # "--NoDataValue=-9999",
     "--co", "TILED=YES",
     "--co", "BLOCKXSIZE=512",
     "--co", "BLOCKYSIZE=512",
