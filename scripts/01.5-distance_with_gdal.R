@@ -118,10 +118,11 @@ cmd <- paste(
   "-r min",  # when pixels overlap get minimum value
   "--config GDAL_NUM_THREADS ALL_CPUS",  
   "--config GDAL_CACHEMAX 49152",  
-  "-co TILED=YES",  
+  "-co TILED=YES", 
+  "COMPRESS=DEFLATE", # try this new compression method
+  '-co "PREDICTOR=2',  # horizontal differencing
   "-co BLOCKXSIZE=512",  
   "-co BLOCKYSIZE=512",  
-  "-co COMPRESS=LZW"  
 )
 # run
 system(cmd)
