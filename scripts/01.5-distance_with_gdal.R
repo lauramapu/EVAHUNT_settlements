@@ -29,7 +29,7 @@ Sys.setenv(PYTHONPATH = "C:/Program Files/QGIS 3.28.13/apps/Python39/Lib")
 tiles <- list.files('results/splitRaster/tiles_3x2', pattern = '^Settlement_2000_tile.*\\.tif$', full.names = TRUE)
 
 # loop to process each tile
-for (i in seq_along(tiles)[2:6]) {
+for (i in seq_along(tiles)) {
   # paths for the files involved in the process
   original <- tiles[i]
   processed <- sub("Settlement_2000_tile", "dists_2000_tile", original)  # intermediate distance raster
@@ -111,20 +111,19 @@ output_raster <- "results/distance_2000.tif"
 
 # and merge them with gdalwarp, getting minimum value when pixels overlap (buffer)
 cmd <- paste(
-  shQuote("C:/Program Files/QGIS 3.28.13/bin/python.exe"),  # Ruta a Python (GDAL)
-  shQuote("C:/Program Files/QGIS 3.28.13/apps/Python39/Scripts/gdalwarp.py"),  # Ruta a gdalwarp.py
-  paste(shQuote(distance_tiles), collapse = " "),  # Lista de tiles como entrada
-  shQuote(output_raster),  # Raster de salida
-  "-r min",  # Resolver solapamientos usando el valor mínimo
-  "--config GDAL_NUM_THREADS ALL_CPUS",  # Usar todos los núcleos disponibles
-  "--config GDAL_CACHEMAX 49152",  # Usar 48GB de caché (ajustable según tu sistema)
-  "-co TILED=YES",  # Configurar el raster de salida como tiled
-  "-co BLOCKXSIZE=512",  # Tamaño de bloque X
-  "-co BLOCKYSIZE=512",  # Tamaño de bloque Y
-  "-co COMPRESS=LZW"  # Comprimir usando LZW
+  shQuote("C:/Program Files/QGIS 3.28.13/bin/python.exe"),  
+  shQuote("C:/Program Files/QGIS 3.28.13/apps/Python39/Scripts/gdalwarp.py"), 
+  paste(shQuote(distance_tiles), collapse = " "), # tile list
+  shQuote(output_raster), 
+  "-r min",  # when pixels overlap get minimum value
+  "--config GDAL_NUM_THREADS ALL_CPUS",  
+  "--config GDAL_CACHEMAX 49152",  
+  "-co TILED=YES",  
+  "-co BLOCKXSIZE=512",  
+  "-co BLOCKYSIZE=512",  
+  "-co COMPRESS=LZW"  
 )
-
-# Ejecutar el comando en el sistema
+# run
 system(cmd)
 
 # and that's all
