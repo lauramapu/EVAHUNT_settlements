@@ -6,6 +6,7 @@
 # first thing gdal will do is to calculate final file size and tell you if you have space
 
 # WARNING: super heavy processes, don't run if it's not necessary
+# WARNING X2: generated intermediate files weight ~326gb and final 30~80gb
 
 library(raster)
 library(SpaDES)
