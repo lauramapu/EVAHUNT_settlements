@@ -15,10 +15,23 @@ library(doParallel)
 r <- raster('data/Settlement_2000.tif')
 r@data@names <- 'Settlement_2000'
 
+# downsample raster to 1x1km
+# define target resolution (1km in degrees)
+target_res <- 0.00833333
+# calculate aggregation factor
+factor <- target_res / res(r)[1]
+# aggregate (if there is one 1 assign 1)
+r_1km <- aggregate(r, fact=factor, fun=max)
+# check
+res(r_1km)
+
+writeRaster('results/Settlements_2000_downsample.tif', r_1km, overwrite=T)
+
+# split into 6 tiles with a buffer
 nx=3
 ny=2
 buffer=c(10,10)
-path='results/splitRaster/tiles_2x2'
+path='results/tiles_3x2'
 
 splitRaster(r, nx=nx, ny=ny, buffer=buffer, path=path, cl = parallel::makeCluster(6))
 
@@ -27,7 +40,7 @@ Sys.setenv(PYTHONHOME = "C:/Program Files/QGIS 3.28.13/apps/Python39")
 Sys.setenv(PYTHONPATH = "C:/Program Files/QGIS 3.28.13/apps/Python39/Lib")
 
 # list tiles
-tiles <- list.files('results/splitRaster/tiles_3x2', pattern = '^Settlement_2000_tile.*\\.tif$', full.names = TRUE)
+tiles <- list.files('results/tiles_3x2', pattern = '^Settlement_2000_tile.*\\.tif$', full.names = TRUE)
 
 # loop to process each tile
 for (i in seq_along(tiles)) {
@@ -105,7 +118,7 @@ for (i in seq_along(tiles)) {
 cat("Process completed.\n")
 
 # now we need to get all the generated files
-distance_tiles <- list.files('results/splitRaster/tiles_3x2',
+distance_tiles <- list.files('results/tiles_3x2',
                              pattern = 'final', full.names = TRUE)
 
 output_raster <- "results/distance_2000.tif"
