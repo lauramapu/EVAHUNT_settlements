@@ -75,6 +75,7 @@ restore_na_values <- function(processed, original, final) {
     '--co BLOCKXSIZE=512 ',  
     '--co BLOCKYSIZE=512 ',  
     '--co COMPRESS=DEFLATE ',  
+    # if more compression is needed you can add --co PREDICTOR=2
     '--co BIGTIFF=YES ',  
     '--config GDAL_NUM_THREADS ALL_CPUS ',  
     '--config GDAL_CACHEMAX 49152 '
